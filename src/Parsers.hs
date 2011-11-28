@@ -200,7 +200,7 @@ parseConfig = runParser parseConf fields "Config" . stripComments
       perms = permute $ Config
               <$?> pFont <|?> pBgColor <|?> pFgColor <|?> pPosition
               <|?> pTextOffset <|?> pIconOffset
-              <|?> pBorder <|?> pBdColor <|?> pBdWidth <|?> pHideOnStart
+              <|?> pBorder <|?> pBdColor <|?> pBdWidth <|?> pAlpha <|?> pHideOnStart
               <|?> pAllDesktops <|?> pOverrideRedirect <|?> pPickBroadest
               <|?> pLowerOnStart <|?> pPersistent <|?> pIconRoot
               <|?> pCommands <|?> pSepChar <|?> pAlignSep <|?> pTemplate
@@ -224,6 +224,7 @@ parseConfig = runParser parseConf fields "Config" . stripComments
 
       pTextOffset = readField textOffset "textOffset"
       pIconOffset = readField iconOffset "iconOffset"
+      pAlpha = readField alpha "alpha"
       pPosition = readField position "position"
       pHideOnStart = readField hideOnStart "hideOnStart"
       pLowerOnStart = readField lowerOnStart "lowerOnStart"

@@ -57,6 +57,7 @@ data Config =
            , border :: Border       -- ^ NoBorder TopB BottomB or FullB
            , borderColor :: String  -- ^ Border color
            , borderWidth :: Int     -- ^ Border width
+           , alpha :: Int           -- ^ Transparency from 0 (transparent) to 255 (opaque)
            , hideOnStart :: Bool    -- ^ Hide (Unmap) the window on
                                     --   initialization
            , allDesktops :: Bool    -- ^ Tell the WM to map to all desktops
@@ -111,6 +112,7 @@ defaultConfig =
     Config { font = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
            , bgColor = "#000000"
            , fgColor = "#BFBFBF"
+           , alpha   = 0
            , position = Top
            , border = NoBorder
            , borderColor = "#BFBFBF"

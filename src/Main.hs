@@ -121,6 +121,7 @@ data Opts = Help
           | Font       String
           | BgColor    String
           | FgColor    String
+          | Alpha      String
           | T
           | B
           | D
@@ -144,6 +145,8 @@ options =
       "The foreground color. Default grey"
     , Option "i" ["iconroot"] (ReqArg IconRoot "path")
       "Root directory for icon pattern paths. Default '.'"
+    , Option "a" ["alpha"] (ReqArg Alpha "alpha")
+      "The transparency: 0 is transparent, 255 is opaque"
     , Option "o" ["top"] (NoArg T) "Place xmobar at the top of the screen"
     , Option "b" ["bottom"] (NoArg B)
       "Place xmobar at the bottom of the screen"
@@ -200,6 +203,7 @@ doOpts conf (o:oo) =
     Font s -> doOpts' (conf {font = s})
     BgColor s -> doOpts' (conf {bgColor = s})
     FgColor s -> doOpts' (conf {fgColor = s})
+    Alpha n -> doOpts' (conf {alpha = read n})
     T -> doOpts' (conf {position = Top})
     B -> doOpts' (conf {position = Bottom})
     D -> doOpts' (conf {overrideRedirect = False})
