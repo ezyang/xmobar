@@ -129,7 +129,8 @@ parseConfig = runParser parseConf fields "Config" . stripComments
 
       perms = permute $ Config
               <$?> pFont         <|?> pBgColor
-              <|?> pFgColor      <|?> pPosition
+              <|?> pFgColor      <|?> pAlpha
+              <|?> pPosition
               <|?> pBorder       <|?> pBdColor
               <|?> pLowerOnStart <|?> pCommands
               <|?> pSepChar      <|?> pAlignSep
@@ -146,6 +147,7 @@ parseConfig = runParser parseConf fields "Config" . stripComments
       pAlignSep = strField alignSep "alignSep"
       pTemplate = strField template "template"
 
+      pAlpha        = field alpha        "alpha"        $ tillFieldEnd >>= read' "alpha"
       pPosition     = field position     "position"     $ tillFieldEnd >>= read' "position"
       pLowerOnStart = field lowerOnStart "lowerOnStart" $ tillFieldEnd >>= read' "lowerOnStart"
       pBorder       = field border       "border"       $ tillFieldEnd >>= read' "border"

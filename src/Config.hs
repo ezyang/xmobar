@@ -51,6 +51,7 @@ data Config =
     Config { font           :: String     -- ^ Font
            , bgColor        :: String     -- ^ Backgroud color
            , fgColor        :: String     -- ^ Default font color
+           , alpha          :: Int        -- ^ Transparency from 0 (transparent) to 255 (opaque)
            , position       :: XPosition  -- ^ Top Bottom or Static
            , border         :: Border     -- ^ NoBorder TopB BottomB or FullB
            , borderColor    :: String     -- ^ Border color
@@ -91,6 +92,7 @@ defaultConfig =
     Config { font     = "-misc-fixed-*-*-*-*-10-*-*-*-*-*-*-*"
            , bgColor  = "#000000"
            , fgColor  = "#BFBFBF"
+           , alpha    = 0
            , position = Top
            , border = NoBorder
            , borderColor  = "#BFBFBF"

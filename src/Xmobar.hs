@@ -318,14 +318,37 @@ drawInWin (Rectangle _ _ wid ht) ~[left,center,right] = do
   let (c,d ) = (config &&& display) r
       (w,fs) = (window &&& fontS  ) r
       strLn  = io . mapM (\(s,cl) -> textWidth d fs s >>= \tw -> return (s,cl,fi tw))
-  withColors d [bgColor c, borderColor c] $ \[bgcolor, bdcolor] -> do
+  withColors d [borderColor c] $ \[bdcolor] -> do
     gc <- io $ createGC  d w
     -- create a pixmap to write to and fill it with a rectangle
     p <- io $ createPixmap d w wid ht
          (defaultDepthOfScreen (defaultScreenOfDisplay d))
-    -- the fgcolor of the rectangle will be the bgcolor of the window
-    io $ setForeground d gc bgcolor
-    io $ fillRectangle d p gc 0 0 wid ht
+    io $ withRenderPicture d p $ \pic -> do
+        -- Handle background color
+        bgcolor <- parseRenderColor d (bgColor c)
+        withRenderFill d bgcolor $ \bgfill ->
+            -- I apparently don't know how to do this properly with
+            -- just bgcolor' (putting in the mask alpha directly has strange
+            -- results.  I wish someone had better docs on how
+            -- XRenderComposite worked...)
+            withRenderFill d (XRenderColor 0 0 0 (257 * alpha c)) $ \m ->
+                xRenderComposite d pictOpSrc bgfill m pic 0 0 0 0 0 0 (fromIntegral wid) (fromIntegral ht)
+        -- Handle transparency
+        internAtom d "_XROOTPMAP_ID" False >>= \xid ->
+            let xroot = defaultRootWindow d in
+            alloca $ \x1 ->
+            alloca $ \x2 ->
+            alloca $ \x3 ->
+            alloca $ \x4 ->
+            alloca $ \pprop -> do
+                xGetWindowProperty d xroot xid 0 1 False 20 x1 x2 x3 x4 pprop
+                prop <- peek pprop
+                when (prop /= nullPtr) $ do
+                    rootbg <- peek (castPtr prop) :: IO Pixmap
+                    xFree prop
+                    withRenderPicture d rootbg $ \bgpic ->
+                        withRenderFill d (XRenderColor 0 0 0 (0xFFFF - 257 * alpha c)) $ \m ->
+                            xRenderComposite d pictOpAdd bgpic m pic 0 0 0 0 0 0 (fromIntegral wid) (fromIntegral ht)
     -- write to the pixmap the new string
     printStrings p gc fs 1 L =<< strLn left
     printStrings p gc fs 1 R =<< strLn right
@@ -375,8 +398,5 @@ printStrings dr gc fontst offs a sl@((s,c,l):xs) = do
       (fc,bc)              = case break (==',') c of
                                (f,',':b) -> (f, b           )
                                (f,    _) -> (f, bgColor conf)
-  withColors d [bc] $ \[bc'] -> do
-    io $ setForeground d gc bc'
-    io $ fillRectangle d dr gc offset 0 (fi l) ht
   io $ printString d dr fontst gc fc bc offset valign s
   printStrings dr gc fontst (offs + l) a xs

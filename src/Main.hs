@@ -95,6 +95,7 @@ data Opts = Help
           | Font     String
           | BgColor  String
           | FgColor  String
+          | Alpha    String
           | T
           | B
           | AlignSep String
@@ -111,6 +112,7 @@ options =
     , Option ['f'     ] ["font"     ] (ReqArg Font     "font name") "The font name"
     , Option ['B'     ] ["bgcolor"  ] (ReqArg BgColor  "bg color" ) "The background color. Default black"
     , Option ['F'     ] ["fgcolor"  ] (ReqArg FgColor  "fg color" ) "The foreground color. Default grey"
+    , Option ['a'     ] ["alpha"    ] (ReqArg Alpha    "alpha"    ) "The transparency: 0 is transparent, 255 is opaque"
     , Option ['o'     ] ["top"      ] (NoArg  T                   ) "Place xmobar at the top of the screen"
     , Option ['b'     ] ["bottom"   ] (NoArg  B                   ) "Place xmobar at the bottom of the screen"
     , Option ['a'     ] ["alignsep" ] (ReqArg AlignSep "alignsep" ) "Separators for left, center and right text\nalignment. Default: '}{'"
@@ -155,6 +157,7 @@ doOpts conf (o:oo) =
       Font     s -> doOpts (conf {font     = s     }) oo
       BgColor  s -> doOpts (conf {bgColor  = s     }) oo
       FgColor  s -> doOpts (conf {fgColor  = s     }) oo
+      Alpha    s -> doOpts (conf {alpha    = read s}) oo
       T          -> doOpts (conf {position = Top   }) oo
       B          -> doOpts (conf {position = Bottom}) oo
       AlignSep s -> doOpts (conf {alignSep = s     }) oo
