@@ -83,7 +83,7 @@ executable xmobar
 
     if true
        ghc-options: -funbox-strict-fields -Wall -threaded
-       extra-libraries: Xrandr
+       extra-libraries: Xrandr, Xrender
 
     if impl (ghc == 6.10.1) && arch (x86_64)
        ghc-options: -O0
