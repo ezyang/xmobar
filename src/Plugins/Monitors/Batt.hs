@@ -180,18 +180,19 @@ runBatt' bfs args = do
   d <- getConfigValue decDigits
   case c of
     Result x w t s ->
-      do l <- fmtPercent x
+      do ac <- io $ haveAc (onlineFile opts)
+         l <- fmtPercent x ac opts
          ws <- fmtWatts w opts suffix d
          si <- getIconPattern opts s x
          parseTemplate (l ++ [fmtStatus opts s, fmtTime $ floor t, ws, si])
     NA -> getConfigValue naString
-  where fmtPercent :: Float -> Monitor [String]
-        fmtPercent x = do
+  where fmtPercent x ac o = do
           let x' = minimum [1, x]
+          p' <- floatToPercent x'
           p <- showPercentWithColors x'
           b <- showPercentBar (100 * x') x'
           vb <- showVerticalBar (100 * x') x'
-          return [b, vb, p]
+          return [b, vb, if ac then maybeColor (posColor o) p' else p]
         fmtWatts x o s d = do
           ws <- showWithPadding $ showDigits d x ++ (if s then "W" else "")
           return $ color x o ws
