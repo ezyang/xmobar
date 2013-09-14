@@ -270,7 +270,7 @@ updateActions conf (Rectangle _ _ wid _) ~[left,center,right] = do
 
 -- | Draws in and updates the window
 drawInWin :: Rectangle -> [[(Widget, String, Maybe Action)]] -> X ()
-drawInWin (Rectangle _ _ wid ht) ~[left,center,right] = do
+drawInWin (Rectangle bgx bgy wid ht) ~[left,center,right] = do
   r <- ask
   let (c,d ) = (config &&& display) r
       (w,fs) = (window &&& fontS  ) r
@@ -309,7 +309,7 @@ drawInWin (Rectangle _ _ wid ht) ~[left,center,right] = do
                     xFree prop
                     withRenderPicture d rootbg $ \bgpic ->
                         withRenderFill d (XRenderColor 0 0 0 (0xFFFF - 257 * alpha c)) $ \m ->
-                            xRenderComposite d pictOpAdd bgpic m pic 0 0 0 0 0 0 (fromIntegral wid) (fromIntegral ht)
+                            xRenderComposite d pictOpAdd bgpic m pic (fromIntegral bgx) (fromIntegral bgy) 0 0 0 0 (fromIntegral wid) (fromIntegral ht)
     -- write to the pixmap the new string
     printStrings p gc fs 1 L =<< strLn left
     printStrings p gc fs 1 R =<< strLn right
