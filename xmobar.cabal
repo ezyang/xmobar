@@ -28,7 +28,7 @@ source-repository head
 
 flag with_xft
   description: Use Xft to render text. UTF-8 support included.
-  default: False
+  default: True
 
 flag with_utf8
   description: With UTF-8 support.
